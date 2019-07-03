@@ -34,7 +34,7 @@
 									"referenceName": "dswatermark",
 									"type": "DatasetReference"
 								},
-								"firstRowOnly": false
+								"firstRowOnly": true
 							}
 						}
 					]
