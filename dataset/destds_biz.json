@@ -1,0 +1,23 @@
+{
+	"name": "destds_biz",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lsbiz",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SinkTablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().SinkTablename",
+				"type": "Expression"
+			}
+		}
+	}
+}
