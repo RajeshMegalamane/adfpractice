@@ -1,6 +1,14 @@
 {
 	"name": "IncrementalCopy",
 	"properties": {
+		"activities": [
+			{
+				"name": "IterateSQLTable",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": []
+			}
+		],
 		"parameters": {
 			"Tablelist": {
 				"type": "string"
