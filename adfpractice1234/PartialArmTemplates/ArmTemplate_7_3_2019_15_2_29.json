@@ -1,0 +1,280 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "adfpractice1234"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/sourceds_bingo')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lsbingo",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Location",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModifiedOn",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[Employee]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/destds_biz')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lsbiz",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SinkTablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": {
+						"value": "@dataset().SinkTablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dswatermark')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lsbiz",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TableName",
+						"type": "varchar"
+					},
+					{
+						"name": "WatermarkValue",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[watermarktable]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IncrementalCopy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "IterateSQLTable",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.tableList",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Lookupoldwatermark",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "select * from dbo.watermarktable\nwhere Tablename='@{item().Table_name}"
+										},
+										"dataset": {
+											"referenceName": "dswatermark",
+											"type": "DatasetReference"
+										},
+										"firstRowOnly": true
+									}
+								},
+								{
+									"name": "LookupNewWaterMark",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}"
+										},
+										"dataset": {
+											"referenceName": "sourceds_bingo",
+											"type": "DatasetReference"
+										}
+									}
+								},
+								{
+									"name": "IncrementalCopy",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Lookupoldwatermark",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "LookupNewWaterMark",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "select * from @{item().TABLE_NAME} where @{item().WaterMark_Column} > '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and @{item().WaterMark_Column} <= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"sqlWriterStoredProcedureName": "@{item().StoredProcedureNameForMergeOperation}",
+											"sqlWriterTableType": "@{item().TableType}"
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "sourceds_bingo",
+											"type": "DatasetReference"
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "destds_biz",
+											"type": "DatasetReference",
+											"parameters": {
+												"SinkTablename": "@{item().TABLE_NAME}"
+											}
+										}
+									]
+								},
+								{
+									"name": "StoredProceduretoWriteWatermarkActivity",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "IncrementalCopy",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[usp_write_watermark]",
+										"storedProcedureParameters": {
+											"LastModifiedtime": {
+												"value": "@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}",
+												"type": "DateTime"
+											},
+											"TableName": {
+												"value": "@{activity('LookupOldWaterMarkActivity').output.firstRow.TableName}",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "lsbiz",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Tablelist": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dswatermark')]",
+				"[concat(variables('factoryId'), '/datasets/sourceds_bingo')]",
+				"[concat(variables('factoryId'), '/datasets/destds_biz')]"
+			]
+		}
+	]
+}

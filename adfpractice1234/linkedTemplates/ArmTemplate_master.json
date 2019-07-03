@@ -1,0 +1,105 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "adfpractice1234"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureBlobStorage2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
+		"LSfile_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LSfile'"
+		},
+		"datatable_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'datatable'"
+		},
+		"filetable_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'filetable'"
+		},
+		"lspatient_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lspatient'"
+		},
+		"lsbiz_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lsbiz'"
+		},
+		"lsbingo_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lsbingo'"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas Token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzureBlobStorage2_connectionString": {
+						"value": "[parameters('AzureBlobStorage2_connectionString')]"
+					},
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
+					"LSfile_connectionString": {
+						"value": "[parameters('LSfile_connectionString')]"
+					},
+					"datatable_connectionString": {
+						"value": "[parameters('datatable_connectionString')]"
+					},
+					"filetable_connectionString": {
+						"value": "[parameters('filetable_connectionString')]"
+					},
+					"lspatient_connectionString": {
+						"value": "[parameters('lspatient_connectionString')]"
+					},
+					"lsbiz_connectionString": {
+						"value": "[parameters('lsbiz_connectionString')]"
+					},
+					"lsbingo_connectionString": {
+						"value": "[parameters('lsbingo_connectionString')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
