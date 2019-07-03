@@ -1,0 +1,11 @@
+{
+	"name": "IncrementalCopy",
+	"properties": {
+		"parameters": {
+			"Tablelist": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
