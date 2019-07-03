@@ -90,12 +90,26 @@
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": "select * from @{item().TABLE_NAME} where @{item().WaterMark_Column} > '@{activity('LookupOldWaterMark').output.firstRow.WatermarkValue}' and @{item().WaterMark_Column} <= '@{activity('LookupNewWaterMark').output.firstRow.NewWatermarkvalue}'"
 								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"sqlWriterStoredProcedureName": "@{item().StoredProcedureNameForMergeOperation}",
+									"sqlWriterTableType": "@{item().TableType}"
+								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "sourceds_bingo",
 									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "destds_biz",
+									"type": "DatasetReference",
+									"parameters": {
+										"SinkTablename": "@{item().TABLE_NAME}"
+									}
 								}
 							]
 						}
