@@ -36,6 +36,29 @@
 								},
 								"firstRowOnly": true
 							}
+						},
+						{
+							"name": "LookupNewWaterMark",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "select MAX(@{item().WaterMark_Column}) as NewWatermarkvalue from @{item().TABLE_NAME}"
+								},
+								"dataset": {
+									"referenceName": "sourceds_bingo",
+									"type": "DatasetReference"
+								}
+							}
 						}
 					]
 				}
