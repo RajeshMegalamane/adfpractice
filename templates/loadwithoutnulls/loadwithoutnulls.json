@@ -1,0 +1,724 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name"
+		},
+		"patientwithoutnulss": {
+			"type": "string"
+		},
+		"PatientDataLoad": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/loadwithoutnulls')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSetting",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSetting"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Patient Record ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PatientRecordID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "First Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FirstName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Last Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Date of Birth",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateofBirth",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "Permanent City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PermanentCity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Permanent Street",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PermanentStreet",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Permanent State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PermanentState",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Permanent Zip Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PermanentZipCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Temporary City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TemporaryCity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Temporary Street",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TemporaryStreet",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Temporary State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TemporaryState",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Temporary Zip Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TemporaryZipCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Confidential City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ConfidentialCity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Confidential Street",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ConfidentialStreet",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Confidential State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ConfidentialState",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Confidential Zip Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ConfidentialZipCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Email",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Email",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Legal Sex",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LegalSex",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Race",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Race",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Ethnicity",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Ethnicity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Primary Phone Number",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "PrimaryPhoneNumber",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Home Phone",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "HomePhone",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Mobile Phone",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "MobilePhone",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Work Phone",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "WorkPhone",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Preferred Phone",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PreferredPhone",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Gender Identify",
+											"type": "String"
+										},
+										"sink": {
+											"name": "GenderIdentify",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sex Assigned at Birth",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SexAssignedatBirth",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MRN",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MRN",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Social Security Number",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SocialSecurityNumber",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Language Preference",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LanguagePreference",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Preferred Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PreferredName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Primary Care Provider",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PrimaryCareProvider",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MyChart Status",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MyChartStatus",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Patientwithoutnulls",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "PatientDataLoad",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Patientwithoutnulls')]",
+				"[concat(variables('factoryId'), '/datasets/PatientDataLoad')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Patientwithoutnulls')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('patientwithoutnulss')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "patient_testdata.csv",
+						"container": "loadtestfilenew"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Patient Record ID",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "First Name",
+						"type": "String"
+					},
+					{
+						"name": "Last Name",
+						"type": "String"
+					},
+					{
+						"name": "Date of Birth",
+						"type": "String"
+					},
+					{
+						"name": "Permanent City",
+						"type": "String"
+					},
+					{
+						"name": "Permanent Street",
+						"type": "String"
+					},
+					{
+						"name": "Permanent State",
+						"type": "String"
+					},
+					{
+						"name": "Permanent Zip Code",
+						"type": "String"
+					},
+					{
+						"name": "Temporary City",
+						"type": "String"
+					},
+					{
+						"name": "Temporary Street",
+						"type": "String"
+					},
+					{
+						"name": "Temporary State",
+						"type": "String"
+					},
+					{
+						"name": "Temporary Zip Code",
+						"type": "String"
+					},
+					{
+						"name": "Confidential City",
+						"type": "String"
+					},
+					{
+						"name": "Confidential Street",
+						"type": "String"
+					},
+					{
+						"name": "Confidential State",
+						"type": "String"
+					},
+					{
+						"name": "Confidential Zip Code",
+						"type": "String"
+					},
+					{
+						"name": "Email",
+						"type": "String"
+					},
+					{
+						"name": "Legal Sex",
+						"type": "String"
+					},
+					{
+						"name": "Race",
+						"type": "String"
+					},
+					{
+						"name": "Ethnicity",
+						"type": "String"
+					},
+					{
+						"name": "Primary Phone Number",
+						"type": "String"
+					},
+					{
+						"name": "Home Phone",
+						"type": "String"
+					},
+					{
+						"name": "Mobile Phone",
+						"type": "String"
+					},
+					{
+						"name": "Work Phone",
+						"type": "String"
+					},
+					{
+						"name": "Preferred Phone",
+						"type": "String"
+					},
+					{
+						"name": "Gender Identify",
+						"type": "String"
+					},
+					{
+						"name": "Sex Assigned at Birth",
+						"type": "String"
+					},
+					{
+						"name": "MRN",
+						"type": "String"
+					},
+					{
+						"name": "Social Security Number",
+						"type": "String"
+					},
+					{
+						"name": "Language Preference",
+						"type": "String"
+					},
+					{
+						"name": "Preferred Name",
+						"type": "String"
+					},
+					{
+						"name": "Primary Care Provider",
+						"type": "String"
+					},
+					{
+						"name": "MyChart Status",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PatientDataLoad')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('PatientDataLoad')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PatientRecordID",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "varchar"
+					},
+					{
+						"name": "LastName",
+						"type": "varchar"
+					},
+					{
+						"name": "DateofBirth",
+						"type": "date"
+					},
+					{
+						"name": "PermanentCity",
+						"type": "varchar"
+					},
+					{
+						"name": "PermanentStreet",
+						"type": "varchar"
+					},
+					{
+						"name": "PermanentState",
+						"type": "varchar"
+					},
+					{
+						"name": "PermanentZipCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TemporaryCity",
+						"type": "varchar"
+					},
+					{
+						"name": "TemporaryStreet",
+						"type": "varchar"
+					},
+					{
+						"name": "TemporaryState",
+						"type": "varchar"
+					},
+					{
+						"name": "TemporaryZipCode",
+						"type": "varchar"
+					},
+					{
+						"name": "ConfidentialCity",
+						"type": "varchar"
+					},
+					{
+						"name": "ConfidentialStreet",
+						"type": "varchar"
+					},
+					{
+						"name": "ConfidentialState",
+						"type": "varchar"
+					},
+					{
+						"name": "ConfidentialZipCode",
+						"type": "varchar"
+					},
+					{
+						"name": "Email",
+						"type": "varchar"
+					},
+					{
+						"name": "LegalSex",
+						"type": "varchar"
+					},
+					{
+						"name": "Race",
+						"type": "varchar"
+					},
+					{
+						"name": "Ethnicity",
+						"type": "varchar"
+					},
+					{
+						"name": "PrimaryPhoneNumber",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "HomePhone",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "MobilePhone",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WorkPhone",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PreferredPhone",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "GenderIdentify",
+						"type": "varchar"
+					},
+					{
+						"name": "SexAssignedatBirth",
+						"type": "varchar"
+					},
+					{
+						"name": "MRN",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[patients_test]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
